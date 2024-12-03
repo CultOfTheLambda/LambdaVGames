@@ -12,4 +12,8 @@
       <Folder Include="Dev\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MySql.Data" Version="9.1.0" />
+    </ItemGroup>
+
 </Project>

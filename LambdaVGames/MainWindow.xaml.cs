@@ -1,13 +1,6 @@
-﻿using System.Text;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using MySql.Data.MySqlClient;
 
 namespace LambdaVGames;
 
@@ -15,7 +8,27 @@ namespace LambdaVGames;
 /// Interaction logic for MainWindow.xaml
 /// </summary>
 public partial class MainWindow : Window {
+    private static MySqlConnection connection;
+    private const string dbConnection = "server=localhost;user id=Test;password=Test;database=LambdaVGamesDb";
+    
     public MainWindow() {
         InitializeComponent();
+
+        using (connection = new MySqlConnection(dbConnection)) {
+            connection.Open();
+
+            if (connection.State == System.Data.ConnectionState.Open) {
+                MessageBox.Show("Connection established.");
+            }
+            else {
+                MessageBox.Show("Unable to connect to database.");
+            }
+        }
+    }
+
+    protected override void OnClosing(CancelEventArgs e) {
+        connection.Close();
+        
+        base.OnClosing(e);
     }
 }
