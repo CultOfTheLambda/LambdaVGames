@@ -8,26 +8,36 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="7*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="24*"></RowDefinition>
+            <RowDefinition Height="29*"></RowDefinition>
+            <RowDefinition Height="140*"/>
+            <RowDefinition Height="24*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="2*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        
-        <Label Grid.Row="0" Grid.ColumnSpan="2" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">LambdaVGames</Label>
-        
-        <ListBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="0"></ListBox>
-        
-        <StackPanel Grid.Row="1" Grid.Column="1">
-            <Label>Name: </Label>
-            <Label>Multiplayer: </Label>
-            <Label>Description:</Label>
+
+        <Label FontSize="30" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="21,0,0,0">LambdaVGames</Label>
+
+        <ListBox x:Name="GamesBox" Grid.RowSpan="4" Grid.Column="0" SelectionChanged="GamesBox_SelectionChanged" Grid.ColumnSpan="2" Margin="0,48,533,0"/>
+
+        <StackPanel Grid.Column="1" Margin="0,48,0,48" Grid.RowSpan="4">
+            <StackPanel Orientation="Horizontal">
+                <Label Cursor="AppStarting">Name:</Label>
+                <TextBox x:Name="NameTextBox" Width="300" TextChanged="NameTextBox_TextChanged"></TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Multiplayer:</Label>
+                <TextBox x:Name="MultiplayerTextBox" Width="300" TextChanged="MultiplayerTextBox_TextChanged"></TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Description:</Label>
+                <TextBox x:Name="DescriptionTextBox" Width="300" TextChanged="DescriptionTextBox_TextChanged"></TextBox>
+            </StackPanel>
         </StackPanel>
-        
-        <Button Grid.Column="1" Grid.Row="2" Width="200" HorizontalAlignment="Left">Remove Game</Button>
-        <Button Grid.Column="1" Grid.Row="2" Width="200" HorizontalAlignment="Right">Add Game</Button>
+
+        <Button Grid.Column="1" Grid.Row="3" Width="200" HorizontalAlignment="Left">Remove Game</Button>
+        <Button Grid.Column="1" Grid.Row="3" Width="200" HorizontalAlignment="Left" Margin="333,0,0,0">Add Game</Button>
     </Grid>
 </Window>
