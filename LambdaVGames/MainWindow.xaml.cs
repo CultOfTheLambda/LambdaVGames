@@ -9,7 +9,7 @@ namespace LambdaVGames;
 /// Interaction logic for MainWindow.xaml
 /// </summary>
 public partial class MainWindow : Window {
-    private static MySqlConnection connection;
+    private readonly MySqlConnection connection;
     private const string dbConnection = "server=localhost;user id=Test;password=Test;database=LambdaVGamesDb";
 
     private List<Game> data = [];
@@ -19,12 +19,7 @@ public partial class MainWindow : Window {
         InitializeComponent();
         DatabaseDialog dbDialog = new();
         bool? result = dbDialog.ShowDialog();
-
         connection = dbDialog.connection ?? throw new NullReferenceException("Database connection is null.");
-
-            
-
-        data.Add(new A("hi"));
 
         GamesBox.ItemsSource = data;
     }
@@ -61,20 +56,6 @@ public partial class MainWindow : Window {
     private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         NameTextBox.Text = data[GamesBox.SelectedIndex].name;
-        CategoryTextBox.Text = data[GamesBox.SelectedIndex].category;
         DescriptionTextBox.Text = data[GamesBox.SelectedIndex].description;
-        PriceTextBox.Text = data[GamesBox.SelectedIndex].price.ToString();
-        ReleaseDateTextBox.Text = data[GamesBox.SelectedIndex].date.ToString();
-        switch(data[GamesBox.SelectedIndex].multiplayer)
-        {
-            case true:
-                JaBtn.IsChecked = true;
-                NeinBtn.IsChecked = false;
-                break;
-            case false:
-                JaBtn.IsChecked = false;
-                NeinBtn.IsChecked = true;
-                break;
-        }
     }
 }
