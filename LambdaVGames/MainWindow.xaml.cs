@@ -31,7 +31,7 @@ public partial class MainWindow : Window {
 
         data.Add(new A("hi"));
 
-        GamesBox.ItemsSource = data;
+        // GamesBox.ItemsSource = data;
     }
 
     protected override void OnClosing(CancelEventArgs e) {
@@ -43,7 +43,7 @@ public partial class MainWindow : Window {
     private void GamesBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
             NameTextBox.Text = "Name: " + "Test";
-            MultiplayerTextBox.Text = "Multiplayer: " + "Test";
+            // MultiplayerTextBox.Text = "Multiplayer: " + "Test";
             DescriptionTextBox.Text = "Description: " + "Test";
     }
 
