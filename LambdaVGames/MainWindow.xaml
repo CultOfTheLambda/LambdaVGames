@@ -1,43 +1,77 @@
 ﻿<Window x:Class="LambdaVGames.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LambdaVGames"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="LambdaVGames" Height="600" Width="900" Background="#FF2D2D2D">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="24*"></RowDefinition>
-            <RowDefinition Height="29*"></RowDefinition>
-            <RowDefinition Height="140*"/>
-            <RowDefinition Height="24*"></RowDefinition>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="7*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <Label FontSize="30" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="21,0,0,0">LambdaVGames</Label>
+        <DockPanel Grid.Row="0" Grid.ColumnSpan="2" Background="#4C73A8" Height="50">
+            <TextBox Width="250" Height="25" Margin="10,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                     Background="#444444" BorderBrush="#666666" Foreground="White" Text="Search..."/>
+            <TextBlock Text="LambdaVGames" FontSize="20" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Margin="235,0,0,0"/>
+        </DockPanel>
 
-        <ListBox x:Name="GamesBox" Grid.RowSpan="4" Grid.Column="0" SelectionChanged="GamesBox_SelectionChanged" Grid.ColumnSpan="2" Margin="0,48,533,0"/>
+        <ListBox x:Name="GamesBox" Grid.Row="1" Grid.Column="0" Background="#3C5A82" Foreground="White" BorderBrush="#444444" Margin="10" SelectionChanged="ListBox_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Image Source="game_thumbnail_placeholder.jpg" Width="40" Height="40" Margin="5"/>
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="14"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
-        <StackPanel Grid.Column="1" Margin="0,48,0,48" Grid.RowSpan="4">
-            <StackPanel Orientation="Horizontal">
-                <Label Cursor="AppStarting">Name:</Label>
-                <TextBox x:Name="NameTextBox" Width="300" TextChanged="NameTextBox_TextChanged"></TextBox>
+        <StackPanel Grid.Row="1" Grid.Column="1" Background="#3C5A82" Margin="10,20,10,0" VerticalAlignment="Top">
+            <Image Width="120" Height="150" Source="" Stretch="UniformToFill" Margin="0,0,0,10"/>
+
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Name:" Width="100" Foreground="White" VerticalAlignment="Center"/>
+                <TextBox x:Name="NameTextBox" Width="400" Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="NameTextBox_TextChanged"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Multiplayer:</Label>
-                <TextBox x:Name="MultiplayerTextBox" Width="300" TextChanged="MultiplayerTextBox_TextChanged"></TextBox>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Category:" Width="100" Foreground="White" VerticalAlignment="Center"/>
+                <TextBox x:Name="CategoryTextBox" Width="400" Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="CategoryTextBox_TextChanged"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Description:</Label>
-                <TextBox x:Name="DescriptionTextBox" Width="300" TextChanged="DescriptionTextBox_TextChanged"></TextBox>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Description:" Width="100" Foreground="White" VerticalAlignment="Top"/>
+                <TextBox x:Name="DescriptionTextBox" Width="400" Height="100" AcceptsReturn="True" TextWrapping="Wrap" 
+                         Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="DescriptionTextBox_TextChanged"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Price:" Width="100" Foreground="White" VerticalAlignment="Center"/>
+                <TextBox x:Name="PriceTextBox" Width="400" Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="PriceTextBox_TextChanged"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Label Content="Release Date:" Width="100" Foreground="White" VerticalAlignment="Center"/>
+                <DatePicker x:Name="ReleaseDateTextBox" Width="400" Background="#FF4C73A8" Foreground="#4C73A8" BorderBrush="#FFC9C9C9"/>
+
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,5">
+                <Label Content="Multiplayer:" Width="100" Foreground="White" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="JaBtn" Content="Yes" GroupName="MultiplayerGroup" Foreground="White" Margin="0,5,0,0"/>
+                    <RadioButton x:Name="NeinBtn" Content="No" GroupName="MultiplayerGroup" Foreground="White" Margin="10,5,0,0"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                <Button Content="Remove" Width="100" Height="30" Background="#B34141" Foreground="White" Margin="0,0,410,0"/>
+                <Button Content="Add" Width="100" Height="30" Background="#4C73A8" Foreground="White"/>
             </StackPanel>
         </StackPanel>
-
-        <Button Grid.Column="1" Grid.Row="3" Width="200" HorizontalAlignment="Left">Remove Game</Button>
-        <Button Grid.Column="1" Grid.Row="3" Width="200" HorizontalAlignment="Left" Margin="333,0,0,0">Add Game</Button>
     </Grid>
 </Window>
