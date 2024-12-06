@@ -10,7 +10,6 @@ namespace LambdaVGames;
 /// </summary>
 public partial class MainWindow : Window {
     private readonly MySqlConnection connection;
-    private const string dbConnection = "server=localhost;user id=Test;password=Test;database=LambdaVGamesDb";
 
     private List<Game> data = [];
 
@@ -19,7 +18,8 @@ public partial class MainWindow : Window {
         InitializeComponent();
         DatabaseDialog dbDialog = new();
         bool? result = dbDialog.ShowDialog();
-        connection = dbDialog.connection ?? throw new NullReferenceException("Database connection is null.");
+
+        connection = MySqlInterop.Connection ?? throw new NullReferenceException("Database connection is null.");
 
         GamesBox.ItemsSource = data;
     }
