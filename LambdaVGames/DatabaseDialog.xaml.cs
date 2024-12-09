@@ -8,38 +8,60 @@ namespace LambdaVGames;
 /// A dialog window to connect to a database.
 /// </summary>
 public partial class DatabaseDialog : Window {
-    public MySqlConnection? connection;
-    
     public DatabaseDialog() {
         InitializeComponent();
     }
 
     private async void ConnectButton_OnClick(object sender, RoutedEventArgs e) {
-        string connectionString = string.Empty;
-
-        connectionString += $"server={HostTextBox.Text};";
-        connectionString += $"user id={UserTextBox.Text};";
-        connectionString += $"password={PasswordTextBox.Password};";
-        connectionString += $"database={DatabaseTextBox.Text}";
-
-        connection = new MySqlConnection(connectionString);
-
         try {
             LoadingIcon.Visibility = Visibility.Visible;
-            
-            await connection.OpenAsync();
+
+            await MySqlInterop.ConnectToDatabaseServer(HostTextBox.Text, UserTextBox.Text,
+                PasswordTextBox.Password);
             
             LoadingIcon.Visibility = Visibility.Hidden;
         }
         catch (Exception ex) {
             LoadingIcon.Visibility = Visibility.Hidden;
             
-            MessageBox.Show($"Unable to connect to the database: {ex.Message}", "Connection failed",
+            MessageBox.Show($"Unable to connect to the database server: {ex.Message}", "Connection failed",
                 MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
-        if (connection.State == ConnectionState.Open) {
-            Close();
+        if (MySqlInterop.IsConnectedToServer) {
+            if (string.IsNullOrWhiteSpace(DatabaseTextBox.Text)) {
+                if (MessageBox.Show($"Would you like to to create a default database ({MySqlInterop.DefaultDbname})?",
+                        "Invalid Database", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes) {
+                    await MySqlInterop.CreateDatabaseAndConnect();
+                    
+                    Close();
+                }
+            }
+            else {
+                if (!await MySqlInterop.TryConnectToDatabase(DatabaseTextBox.Text)) {
+                    if (MessageBox.Show("The specified database does not exist. Do you want to create it?",
+                            "Invalid Database", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes) {
+                        await MySqlInterop.CreateDatabaseAndConnect(DatabaseTextBox.Text);
+                        
+                        Close();
+                    }
+                }
+                else {
+                    if (!await MySqlInterop.ValidateDbSchema()) {
+                        if (MessageBox.Show("The schema of the specified database is invalid. Would you like to recreate it?\nAttention:\n" +
+                                "This will delete all data previously stored in the database. This action cannot be undone.",
+                                "Invalid db schema", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes) {
+                            await MySqlInterop.CreateDbSchema();
+                            Close();
+                        }
+                    }
+                    else {
+                        Close();   
+                    }
+                }
+            }
         }
+        
+        MySqlInterop.CloseConnection();
     }
 }

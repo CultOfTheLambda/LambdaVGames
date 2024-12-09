@@ -18,7 +18,7 @@ public partial class MainWindow : Window {
         DatabaseDialog dbDialog = new();
         bool? result = dbDialog.ShowDialog();
 
-        connection = dbDialog.connection ?? throw new NullReferenceException("Database connection is null.");
+        connection = MySqlInterop.Connection ?? throw new NullReferenceException("Database connection is null.");
     }
 
     protected override void OnClosing(CancelEventArgs e) {
