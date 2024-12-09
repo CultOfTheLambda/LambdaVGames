@@ -10,28 +10,15 @@ namespace LambdaVGames;
 /// Interaction logic for MainWindow.xaml
 /// </summary>
 public partial class MainWindow : Window {
-    private static MySqlConnection connection;
-    private const string dbConnection = "server=localhost;user id=Test;password=Test;database=LambdaVGamesDb";
-
-    private List<A> data = [];
+    private readonly MySqlConnection connection;
     
     public MainWindow() {
         InitializeComponent();
+        
+        DatabaseDialog dbDialog = new();
+        bool? result = dbDialog.ShowDialog();
 
-        using (connection = new MySqlConnection(dbConnection)) {
-            //connection.Open();
-
-            if (connection.State == System.Data.ConnectionState.Open) {
-                MessageBox.Show("Connection established.");
-            }
-            else {
-                MessageBox.Show("Unable to connect to database.");
-            }
-        }
-
-        data.Add(new A("hi"));
-
-        // GamesBox.ItemsSource = data;
+        connection = dbDialog.connection ?? throw new NullReferenceException("Database connection is null.");
     }
 
     protected override void OnClosing(CancelEventArgs e) {
