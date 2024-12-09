@@ -47,7 +47,17 @@ public partial class DatabaseDialog : Window {
                     }
                 }
                 else {
-                    Close();
+                    if (!await MySqlInterop.ValidateDbSchema()) {
+                        if (MessageBox.Show("The schema of the specified database is invalid. Would you like to recreate it?\nAttention:\n" +
+                                "This will delete all data previously stored in the database. This action cannot be undone.",
+                                "Invalid db schema", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes) {
+                            await MySqlInterop.CreateDbSchema();
+                            Close();
+                        }
+                    }
+                    else {
+                        Close();   
+                    }
                 }
             }
         }
