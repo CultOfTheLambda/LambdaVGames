@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 using MySql.Data.MySqlClient;
 
 namespace LambdaVGames;
@@ -47,6 +49,17 @@ public partial class MainWindow : Window {
     private void DescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
 
+    }
+
+    private void OnMenuLinkClick(object sender, RoutedEventArgs e) {
+        Process.Start(new ProcessStartInfo {
+            FileName = $"{((MenuItem)sender).Tag.ToString()}",
+            UseShellExecute = true
+        });
+    }
+
+    private void OnMenuCloseClick(object sender, RoutedEventArgs e) {
+        this.Close();
     }
 }
 
