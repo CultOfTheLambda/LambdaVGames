@@ -64,7 +64,7 @@
                 <Label Content="Multiplayer:" Width="100" Foreground="White" VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal">
                     <RadioButton x:Name="JaBtn" Content="Yes" GroupName="MultiplayerGroup" Foreground="White" Margin="0,5,0,0" Click="JaBtn_Click"/>
-                    <RadioButton x:Name="NeinBtn" Content="No" GroupName="MultiplayerGroup" Foreground="White" Margin="10,5,0,0"/>
+                    <RadioButton x:Name="NeinBtn" Content="No" GroupName="MultiplayerGroup" Foreground="White" Margin="10,5,0,0" Click="NeinBtn_Click"/>
                 </StackPanel>
             </StackPanel>
 

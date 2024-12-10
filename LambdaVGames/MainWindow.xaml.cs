@@ -94,17 +94,27 @@ public partial class MainWindow : Window
 
     private void ReleaseDateTextBox_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
     {
-        data[GamesBox.SelectedIndex].date = ReleaseDateTextBox.SelectedDate;
+        if (GamesBox.SelectedIndex >= 0)
+        {
+            data[GamesBox.SelectedIndex].date = ReleaseDateTextBox.SelectedDate;
+        }
+        else;
     }
     private void JaBtn_Click(object sender, RoutedEventArgs e)
     {
-        data[GamesBox.SelectedIndex].multiplayer = true;
-        NeinBtn.IsChecked = false;
+        if (GamesBox.SelectedIndex >= 0)
+        {
+            data[GamesBox.SelectedIndex].multiplayer = true;
+        }
+        else;
     }
     private void NeinBtn_Click(object sender, RoutedEventArgs e)
     {
-        data[GamesBox.SelectedIndex].multiplayer = false;
-        JaBtn.IsChecked = false;
+        if (GamesBox.SelectedIndex >= 0)
+        {
+            data[GamesBox.SelectedIndex].multiplayer = false;
+        }
+        else;
     }
 
 
@@ -119,10 +129,8 @@ public partial class MainWindow : Window
         {
             case true:
                 JaBtn.IsChecked = true;
-                NeinBtn.IsChecked = false;
                 break;
             case false:
-                JaBtn.IsChecked = false;
                 NeinBtn.IsChecked = true;
                 break;
         }
