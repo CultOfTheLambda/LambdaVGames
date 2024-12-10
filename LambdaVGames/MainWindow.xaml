@@ -51,19 +51,19 @@
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                 <Label Content="Price:" Width="100" Foreground="White" VerticalAlignment="Center"/>
-                <TextBox x:Name="PriceTextBox" Width="400" Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="PriceTextBox_TextChanged"/>
+                <TextBox x:Name="PriceTextBox" Width="400" Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="PriceTextBox_TextChanged" Text=""/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                 <Label Content="Release Date:" Width="100" Foreground="White" VerticalAlignment="Center"/>
-                <DatePicker x:Name="ReleaseDateTextBox" Width="400" Background="#FF4C73A8" Foreground="#4C73A8" BorderBrush="#FFC9C9C9"/>
+                <DatePicker x:Name="ReleaseDateTextBox" Width="400" Background="#FF4C73A8" Foreground="#4C73A8" BorderBrush="#FFC9C9C9" SelectedDateChanged="ReleaseDateTextBox_SelectedDateChanged"/>
 
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,10,0,5">
                 <Label Content="Multiplayer:" Width="100" Foreground="White" VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal">
-                    <RadioButton x:Name="JaBtn" Content="Yes" GroupName="MultiplayerGroup" Foreground="White" Margin="0,5,0,0"/>
+                    <RadioButton x:Name="JaBtn" Content="Yes" GroupName="MultiplayerGroup" Foreground="White" Margin="0,5,0,0" Click="JaBtn_Click"/>
                     <RadioButton x:Name="NeinBtn" Content="No" GroupName="MultiplayerGroup" Foreground="White" Margin="10,5,0,0"/>
                 </StackPanel>
             </StackPanel>
