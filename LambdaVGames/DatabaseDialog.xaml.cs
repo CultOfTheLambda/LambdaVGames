@@ -61,7 +61,5 @@ public partial class DatabaseDialog : Window {
                 }
             }
         }
-        
-        MySqlInterop.CloseConnection();
     }
 }

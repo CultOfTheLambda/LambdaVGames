@@ -1,7 +1,6 @@
-﻿using System.ComponentModel;
-using System.Net.Http.Headers;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using MySql.Data.MySqlClient;
 
 namespace LambdaVGames;
@@ -11,55 +10,55 @@ namespace LambdaVGames;
 /// </summary>
 public partial class MainWindow : Window {
     private readonly MySqlConnection connection;
+
+    public ObservableCollection<Game> Games { get; } = [];
     
     public MainWindow() {
         InitializeComponent();
         
         DatabaseDialog dbDialog = new();
-        bool? result = dbDialog.ShowDialog();
+        dbDialog.ShowDialog();
 
         connection = MySqlInterop.Connection ?? throw new NullReferenceException("Database connection is null.");
+        
+        DataContext = this;
     }
 
     protected override void OnClosing(CancelEventArgs e) {
-        connection.Close();
+        MySqlInterop.CloseConnection();
         
         base.OnClosing(e);
     }
 
-    private void GamesBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-    {
-            NameTextBox.Text = "Name: " + "Test";
-            // MultiplayerTextBox.Text = "Multiplayer: " + "Test";
-            DescriptionTextBox.Text = "Description: " + "Test";
+    private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e) {
+        await RefreshGamesList();
     }
 
-    private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e)
-    {
+    private async Task RefreshGamesList() {
+        Games.Clear();
+        
+        MySqlCommand pullAll = new("SELECT * FROM Games", connection);
 
-    }
+        await using MySqlDataReader reader = (MySqlDataReader)await pullAll.ExecuteReaderAsync();
 
-    private void MultiplayerTextBox_TextChanged(object sender, TextChangedEventArgs e)
-    {
+        while (await reader.ReadAsync()) {
+            int id = reader.GetInt32("Id");
+            string name = reader.GetString("Name");
+            string description = reader.GetString("Description");
+            double price = reader.GetDouble("Price");
+            DateTime releaseDate = reader.GetDateTime("ReleaseDate");
+            bool multiplayer = reader.GetBoolean("Multiplayer");
 
-    }
+            Game game = new() {
+                Id = id,
+                Name = name,
+                Description = description,
+                Price = price,
+                ReleaseDate = releaseDate,
+                Multiplayer = multiplayer
+            };
 
-    private void DescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e)
-    {
-
-    }
-}
-
-public class A
-{
-    string name;
-    public A(string name)
-    {
-        this.name = name;
-    }
-
-    public override string ToString()
-    {
-        return name;
+            Games.Add(game);
+        }
     }
 }

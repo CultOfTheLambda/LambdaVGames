@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LambdaVGames"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="900">
+        Title="MainWindow" Height="600" Width="900" Loaded="MainWindow_OnLoaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
@@ -21,14 +21,14 @@
             <MenuItem Header="File" />
         </Menu>
 
-        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Background="#4C73A8" Height="50" VerticalAlignment="Center">
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Background="#4C73A8" Height="50" VerticalAlignment="Center">
             <DockPanel Grid.Column="0" HorizontalAlignment="Left">
                 <TextBox Width="250" Height="25" Margin="10" HorizontalAlignment="Right" 
                     Background="#444444" BorderBrush="#666666" Foreground="White" Text="Search..."/>
             </DockPanel>
         </DockPanel>
 
-        <ListBox Grid.Row="2" Grid.Column="0" Background="#3C5A82" Foreground="White" BorderBrush="#444444" Margin="10">
+        <ListBox Name="GamesListBox" ItemsSource="{Binding Games}" Grid.Row="2" Grid.Column="0" Background="#3C5A82" Foreground="White" BorderBrush="#444444" Margin="10">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" Margin="5">
