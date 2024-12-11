@@ -22,7 +22,7 @@
                 <MenuItem Header="Manage Connection" Click="MenuItem_OnClick"/>
                 <MenuItem Header="Export Schema"/>
                 <Separator/>
-                <MenuItem Header="Preferences"/>
+                <MenuItem Header="Preferences" Click="OnPreferenceMenuLink"/>
                 <Separator/>
                 <MenuItem Header="Exit" Click="OnExitClick"/>
             </MenuItem>

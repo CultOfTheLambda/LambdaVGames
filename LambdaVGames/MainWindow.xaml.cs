@@ -17,9 +17,9 @@ public partial class MainWindow : Window {
 
     public MainWindow() {
         InitializeComponent();
-        
+
         DataContext = this;
-        
+
         DatabaseDialog dbDialog = new();
         dbDialog.ShowDialog();
         connection = MySqlInterop.Connection ?? throw new NullReferenceException("Database connection is null.");
@@ -99,26 +99,15 @@ public partial class MainWindow : Window {
         }
     }
 
-    private void OnMenuLinkClick(object sender, RoutedEventArgs e) {
-        Process.Start(new ProcessStartInfo {
-            FileName = ((MenuItem)sender).Tag.ToString(),
-            UseShellExecute = true
-        });
-    }
-
-    private void OnExitClick(object sender, RoutedEventArgs e) {
-        this.Close();
-    }
-
     private async void MenuItem_OnClick(object sender, RoutedEventArgs e) {
         DatabaseDialog dbDialog = new(MySqlInterop.Server?? "localhost", MySqlInterop.Username?? string.Empty, string.Empty, MySqlInterop.Database?? "myDb");
         dbDialog.ShowDialog();
-        
+
         connection = MySqlInterop.Connection ?? connection;
 
         await RefreshGamesList();
     }
-    
+
     private async Task RefreshGamesList() {
         Games.Clear();
 
@@ -147,5 +136,21 @@ public partial class MainWindow : Window {
 
             Games.Add(game);
         }
+    }
+
+    private void OnMenuLinkClick(object sender, RoutedEventArgs e) {
+        Process.Start(new ProcessStartInfo {
+            FileName = ((MenuItem)sender).Tag.ToString(),
+            UseShellExecute = true
+        });
+    }
+
+    private void OnExitClick(object sender, RoutedEventArgs e) {
+        this.Close();
+    }
+
+    private void OnPreferenceMenuLink(object sender, RoutedEventArgs e) {
+        PreferencesDialog pD = new();
+        pD.ShowDialog();
     }
 }
