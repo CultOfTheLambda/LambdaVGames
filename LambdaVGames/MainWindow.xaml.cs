@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using MySql.Data.MySqlClient;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Reflection.PortableExecutable;
@@ -124,5 +125,16 @@ public partial class MainWindow : Window {
 
             Games.Add(game);
         }
+    }
+
+    private void OnMenuLinkClick(object sender, RoutedEventArgs e) {
+        Process.Start(new ProcessStartInfo {
+            FileName = ((MenuItem)sender).Tag.ToString(),
+            UseShellExecute = true
+        });
+    }
+
+    private void OnExitClick(object sender, RoutedEventArgs e) {
+        this.Close();
     }
 }
