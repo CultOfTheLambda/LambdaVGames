@@ -19,7 +19,7 @@
 
         <Menu Grid.ColumnSpan="2" VerticalAlignment="Center">
             <MenuItem Header="File">
-                <MenuItem Header="Manage Connection"/>
+                <MenuItem Header="Manage Connection" Click="MenuItem_OnClick"/>
                 <MenuItem Header="Export Schema"/>
                 <Separator/>
                 <MenuItem Header="Preferences"/>
@@ -50,7 +50,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Grid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Background="#3C5A82" Margin="10">
+        <Grid Grid.Row="2" Grid.Column="1" Background="#3C5A82" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="173*"/>
                 <ColumnDefinition Width="437*"/>
@@ -108,7 +108,7 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Remove" Width="100" Height="30" Background="#B34141" Foreground="White" Margin="10, 0"/>
                 <Button Content="Add" Width="100" Height="30" Background="#4C73A8" Foreground="White" Margin="10, 0"/>
             </StackPanel>
