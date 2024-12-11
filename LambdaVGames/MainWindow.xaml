@@ -18,7 +18,18 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.ColumnSpan="2" VerticalAlignment="Center">
-            <MenuItem Header="File" />
+            <MenuItem Header="File">
+                <MenuItem Header="Manage Connection"/>
+                <MenuItem Header="Export Schema"/>
+                <Separator/>
+                <MenuItem Header="Preferences"/>
+                <Separator/>
+                <MenuItem Header="Exit" Click="OnExitClick"/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="Documentation" Tag="https://github.com/CultOfTheLambda/LambdaVGames/blob/master/README.md" Click="OnMenuLinkClick"/>
+                <MenuItem Header="Support" Tag="https://github.com/CultOfTheLambda/LambdaVGames/issues" Click="OnMenuLinkClick"/>
+            </MenuItem>
         </Menu>
 
         <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Background="#4C73A8" Height="50" VerticalAlignment="Center">
