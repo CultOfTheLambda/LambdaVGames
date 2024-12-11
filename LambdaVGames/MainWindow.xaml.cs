@@ -15,6 +15,8 @@ public partial class MainWindow : Window {
     private MySqlConnection connection;
     public ObservableCollection<Game> Games { get; } = [];
 
+    ObservableCollection<Game> FilteredGames = new ObservableCollection<Game>(); //for search bar
+
     public MainWindow() {
         InitializeComponent();
 
@@ -23,6 +25,13 @@ public partial class MainWindow : Window {
         DatabaseDialog dbDialog = new();
         dbDialog.ShowDialog();
         connection = MySqlInterop.Connection ?? throw new NullReferenceException("Database connection is null.");
+
+        foreach(var game in Games)
+    {
+            FilteredGames.Add(game);
+        }
+
+        GamesListBox.ItemsSource = FilteredGames;
     }
 
     protected override void OnClosing(CancelEventArgs e) {
@@ -152,5 +161,28 @@ public partial class MainWindow : Window {
     private void OnPreferenceMenuLink(object sender, RoutedEventArgs e) {
         PreferencesDialog pD = new();
         pD.ShowDialog();
+    }
+
+    private void searchBartxtbx_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if(searchBarTxtbx.Text != "")
+        {
+            searchBarLbl.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            searchBarLbl.Visibility = Visibility.Visible;
+        }
+        string searchText = searchBarTxtbx.Text.ToLower();
+
+        // Filtere die Spiele basierend auf dem Suchtext
+        var filtered = Games.Where(game => game.Name.ToLower().Contains(searchText)).ToList();
+
+        // Aktualisiere die FilteredGames-Liste
+        FilteredGames.Clear();
+        foreach (var game in filtered)
+        {
+            FilteredGames.Add(game);
+        }
     }
 }
