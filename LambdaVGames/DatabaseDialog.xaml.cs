@@ -12,6 +12,15 @@ public partial class DatabaseDialog : Window {
         InitializeComponent();
     }
 
+    public DatabaseDialog(string host, string user, string password, string database) {
+        InitializeComponent();
+        
+        HostTextBox.Text = host;
+        UserTextBox.Text = user;
+        PasswordTextBox.Password = password;
+        DatabaseTextBox.Text = database;
+    }
+
     private async void ConnectButton_OnClick(object sender, RoutedEventArgs e) {
         try {
             LoadingIcon.Visibility = Visibility.Visible;
