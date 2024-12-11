@@ -10,19 +10,19 @@ namespace LambdaVGames;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
+/// </summary>
 public partial class MainWindow : Window {
-    private readonly MySqlConnection connection;
+    private MySqlConnection connection;
     public ObservableCollection<Game> Games { get; } = [];
 
     public MainWindow() {
         InitializeComponent();
 
+        DataContext = this;
 
         DatabaseDialog dbDialog = new();
         dbDialog.ShowDialog();
         connection = MySqlInterop.Connection ?? throw new NullReferenceException("Database connection is null.");
-
-        DataContext = this;
     }
 
     protected override void OnClosing(CancelEventArgs e) {
@@ -43,11 +43,11 @@ public partial class MainWindow : Window {
         }
     }
 
-  /*private void CategoryTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+    private void CategoryTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
-            Games[GamesListBox.SelectedIndex].Ca = CategoryTextBox.Text;
+            Games[GamesListBox.SelectedIndex].Category = CategoryTextBox.Text;
         }
-    }*/
+    }
 
     private void DescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
@@ -57,7 +57,7 @@ public partial class MainWindow : Window {
 
     private void PriceTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
-            Games[GamesListBox.SelectedIndex].Price = Convert.ToDouble(PriceTextBox.Text);
+            Games[GamesListBox.SelectedIndex].Price = Convert.ToSingle(PriceTextBox.Text);
         }
     }
 
@@ -83,7 +83,7 @@ public partial class MainWindow : Window {
     // Display variables from the object in the boxes
     private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
         NameTextBox.Text = Games[GamesListBox.SelectedIndex].Name;
-        //CategoryTextBox.Text = Games[GamesListBox.SelectedIndex].category;
+        CategoryTextBox.Text = Games[GamesListBox.SelectedIndex].Category;
         DescriptionTextBox.Text = Games[GamesListBox.SelectedIndex].Description;
         PriceTextBox.Text = Games[GamesListBox.SelectedIndex].Price.ToString();
         ReleaseDateTextBox.Text = Games[GamesListBox.SelectedIndex].ReleaseDate.ToString();
@@ -99,6 +99,15 @@ public partial class MainWindow : Window {
         }
     }
 
+    private async void MenuItem_OnClick(object sender, RoutedEventArgs e) {
+        DatabaseDialog dbDialog = new(MySqlInterop.Server?? "localhost", MySqlInterop.Username?? string.Empty, string.Empty, MySqlInterop.Database?? "myDb");
+        dbDialog.ShowDialog();
+
+        connection = MySqlInterop.Connection ?? connection;
+
+        await RefreshGamesList();
+    }
+
     private async Task RefreshGamesList() {
         Games.Clear();
 
@@ -109,14 +118,16 @@ public partial class MainWindow : Window {
         while (await reader.ReadAsync()) {
             int id = reader.GetInt32("Id");
             string name = reader.GetString("Name");
+            string category = reader.GetString("Category");
             string description = reader.GetString("Description");
-            double price = reader.GetDouble("Price");
+            float price = reader.GetFloat("Price");
             DateTime releaseDate = reader.GetDateTime("ReleaseDate");
             bool multiplayer = reader.GetBoolean("Multiplayer");
 
             Game game = new() {
                 Id = id,
                 Name = name,
+                Category = category,
                 Description = description,
                 Price = price,
                 ReleaseDate = releaseDate,
