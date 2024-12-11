@@ -137,4 +137,9 @@ public partial class MainWindow : Window {
     private void OnExitClick(object sender, RoutedEventArgs e) {
         this.Close();
     }
+
+    private void OnPreferenceMenuLink(object sender, RoutedEventArgs e) {
+        PreferencesDialog pD = new();
+        pD.ShowDialog();
+    }
 }
