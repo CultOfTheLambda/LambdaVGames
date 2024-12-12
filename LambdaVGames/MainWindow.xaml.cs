@@ -31,8 +31,8 @@ public partial class MainWindow : Window {
         GamesListBox.ItemsSource = Games;
     }
 
-    protected override void OnClosing(CancelEventArgs e) {
-        MySqlInterop.CloseConnection();
+    protected override async void OnClosing(CancelEventArgs e) {
+        await MySqlInterop.CloseConnection();
 
 
         base.OnClosing(e);
@@ -53,6 +53,7 @@ public partial class MainWindow : Window {
     private async void CategoryTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Category = CategoryTextBox.Text;
+            UpadateDb();
         }
     }
 

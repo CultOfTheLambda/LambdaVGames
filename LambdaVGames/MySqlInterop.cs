@@ -263,9 +263,10 @@ public static class MySqlInterop {
 
     public static void UpdateDb(int id, Game newData)
     {
-        MySqlCommand command = new MySqlCommand("UPDATE Games SET Name = @name, Description = @description, Price = @price, ReleaseDate = @releaseDate, Multiplayer = @multiplayer WHERE id = @id;", MySqlInterop.Connection);
+        MySqlCommand command = new MySqlCommand("UPDATE Games SET Name = @name, Category = @category, Description = @description, Price = @price, ReleaseDate = @releaseDate, Multiplayer = @multiplayer WHERE id = @id;", MySqlInterop.Connection);
         command.Parameters.AddWithValue("@id", newData.Id);
         command.Parameters.AddWithValue("@name", newData.Name);
+        command.Parameters.AddWithValue("@category", newData.Category);
         command.Parameters.AddWithValue("@description", newData.Description);
         command.Parameters.AddWithValue("@price", newData.Price);
         command.Parameters.AddWithValue("@releaseDate", newData.ReleaseDate);
@@ -273,8 +274,12 @@ public static class MySqlInterop {
         command.ExecuteNonQuery();
     }
 
-    public static void CloseConnection() {
-        Connection?.Close();
+    public static async Task CloseConnection() {
+        if (Connection != null)
+        {
+            await Connection.CloseAsync();
+        }
+
         IsConnectedToDatabase = false;
         
         Server = null;
