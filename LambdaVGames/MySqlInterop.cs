@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Windows;
 using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
@@ -218,6 +219,18 @@ public static class MySqlInterop {
                                              );
                                             """, Connection);
         await createNewTableCmd.ExecuteNonQueryAsync();
+    }
+
+    public static void UpdateDb(int id, Game newData)
+    {
+        MySqlCommand command = new MySqlCommand("UPDATE Games SET Name = @name, Description = @description, Price = @price, ReleaseDate = @releaseDate, Multiplayer = @multiplayer WHERE id = @id;", MySqlInterop.Connection);
+        command.Parameters.AddWithValue("@id", newData.Id);
+        command.Parameters.AddWithValue("@name", newData.Name);
+        command.Parameters.AddWithValue("@description", newData.Description);
+        command.Parameters.AddWithValue("@price", newData.Price);
+        command.Parameters.AddWithValue("@releaseDate", newData.ReleaseDate);
+        command.Parameters.AddWithValue("@multiplayer", newData.Multiplayer);
+        command.ExecuteNonQuery();
     }
 
     public static void CloseConnection() {

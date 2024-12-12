@@ -35,10 +35,11 @@ public partial class MainWindow : Window {
         await RefreshGamesList();
     }
 
-    // Update object if the box is being edited
+    // Update object if the box is being edited and update the db
     private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Name = NameTextBox.Text;
+            UpadateDb();
         }
     }
 
@@ -51,12 +52,16 @@ public partial class MainWindow : Window {
     private void DescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Description = DescriptionTextBox.Text;
+            UpadateDb();
+
         }
     }
 
     private void PriceTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Price = Convert.ToDouble(PriceTextBox.Text);
+            UpadateDb();
+
         }
     }
 
@@ -64,18 +69,24 @@ public partial class MainWindow : Window {
     private void ReleaseDateTextBox_SelectedDateChanged(object sender, SelectionChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].ReleaseDate = ReleaseDateTextBox.SelectedDate?? DateTime.MinValue;
+            UpadateDb();
+
         }
     }
 
     private void YesBtn_Click(object sender, RoutedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Multiplayer = true;
+            UpadateDb();
+
         }
     }
 
     private void NoBtn_Click(object sender, RoutedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Multiplayer = false;
+            UpadateDb();
+
         }
     }
 
@@ -91,11 +102,16 @@ public partial class MainWindow : Window {
             case true:
                 YesBtn.IsChecked = true;
                 break;
-
             case false:
+
                 NoBtn.IsChecked = true;
                 break;
         }
+    }
+    //Update the db with the values from the selected object
+    public void UpadateDb()
+    {
+        MySqlInterop.UpdateDb(Games[GamesListBox.SelectedIndex].Id, Games[GamesListBox.SelectedIndex]);
     }
 
     private async Task RefreshGamesList() {
