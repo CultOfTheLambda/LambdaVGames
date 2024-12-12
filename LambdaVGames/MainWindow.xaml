@@ -34,8 +34,12 @@
 
         <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Background="#4C73A8" Height="50" VerticalAlignment="Center">
             <DockPanel Grid.Column="0" HorizontalAlignment="Left">
-                <TextBox Width="250" Height="25" Margin="10" HorizontalAlignment="Right" 
-                    Background="#444444" BorderBrush="#666666" Foreground="White" Text="Search..."/>
+                <Grid>
+                    <TextBox x:Name="SearchBarTxtbx" Width="250" Height="25" Margin="10" HorizontalAlignment="Right" 
+                        Background="#444444" BorderBrush="#666666" Foreground="White" TextChanged="SearchBartxtbx_TextChanged"/>
+                    <Label x:Name="searchBarLbl" Height="26" Margin="10,12,10,12" IsHitTestVisible="False"
+                        BorderBrush="#666666" Foreground="White" Content="Search..."/>
+                </Grid>
             </DockPanel>
         </DockPanel>
 

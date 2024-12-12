@@ -230,6 +230,36 @@ public static class MySqlInterop {
         await createNewTableCmd.ExecuteNonQueryAsync();
     }
 
+    public static async Task QueryDatabase(ICollection<Game> collection, string filter = "") {
+        collection.Clear();
+
+        MySqlCommand pullAll = new($"SELECT * FROM Games {filter};", Connection);
+
+        await using MySqlDataReader reader = (MySqlDataReader)await pullAll.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync()) {
+            int id = reader.GetInt32("Id");
+            string name = reader.GetString("Name");
+            string category = reader.GetString("Category");
+            string description = reader.GetString("Description");
+            float price = reader.GetFloat("Price");
+            DateTime releaseDate = reader.GetDateTime("ReleaseDate");
+            bool multiplayer = reader.GetBoolean("Multiplayer");
+
+            Game game = new() {
+                Id = id,
+                Name = name,
+                Category = category,
+                Description = description,
+                Price = price,
+                ReleaseDate = releaseDate,
+                Multiplayer = multiplayer
+            };
+
+            collection.Add(game);
+        }
+    }
+
     public static void CloseConnection() {
         Connection?.Close();
         IsConnectedToDatabase = false;
