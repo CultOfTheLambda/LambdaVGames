@@ -66,11 +66,15 @@ public partial class MainWindow : Window {
 
     private async void PriceTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
-            Games[GamesListBox.SelectedIndex].Price = Convert.ToSingle(PriceTextBox.Text);
-            Games[GamesListBox.SelectedIndex].Price = Convert.ToDouble(PriceTextBox.Text);
-            UpadateDb();
-
-            UpadateDb();
+            if (float.TryParse(PriceTextBox.Text, out float result)) {
+                Games[GamesListBox.SelectedIndex].Price = result;
+                UpadateDb();
+            }
+            else
+            {
+                PriceTextBox.Text = Games[GamesListBox.SelectedIndex].Price.ToString();
+                MessageBox.Show("Invalid price");
+            }
         }
     }
 
