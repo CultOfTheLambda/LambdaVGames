@@ -134,6 +134,15 @@ public static class MySqlInterop {
                 if (isNotNull != !reqColumn.AllowDBNull) {
                     return false;
                 }
+                
+                // Validate EXTRA for AUTO_INCREMENT
+                string extra = columnRows[0]["EXTRA"].ToString()!;
+                bool isAutoIncrement = extra == "auto_increment";
+                
+                // Invalid AUTO_INCREMENT attribute.
+                if (isAutoIncrement != reqColumn.AutoIncrement) {
+                    return false;
+                }
             }
 
             // Check for additional tables.
@@ -210,15 +219,46 @@ public static class MySqlInterop {
         
         MySqlCommand createNewTableCmd = new("""
                                              CREATE TABLE Games (
-                                                 Id INT PRIMARY KEY,
+                                                 Id INT PRIMARY KEY AUTO_INCREMENT,
                                                  Name TEXT NOT NULL,
+                                                 Category TEXT NOT NULL,
                                                  Description TEXT NOT NULL,
-                                                 Price DECIMAL NOT NULL,
+                                                 Price FLOAT NOT NULL,
                                                  ReleaseDate DATETIME NOT NULL,
                                                  Multiplayer BOOLEAN NOT NULL
                                              );
                                             """, Connection);
         await createNewTableCmd.ExecuteNonQueryAsync();
+    }
+
+    public static async Task QueryDatabase(ICollection<Game> collection, string filter = "") {
+        collection.Clear();
+
+        MySqlCommand pullAll = new($"SELECT * FROM Games {filter};", Connection);
+
+        await using MySqlDataReader reader = (MySqlDataReader)await pullAll.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync()) {
+            int id = reader.GetInt32("Id");
+            string name = reader.GetString("Name");
+            string category = reader.GetString("Category");
+            string description = reader.GetString("Description");
+            float price = reader.GetFloat("Price");
+            DateTime releaseDate = reader.GetDateTime("ReleaseDate");
+            bool multiplayer = reader.GetBoolean("Multiplayer");
+
+            Game game = new() {
+                Id = id,
+                Name = name,
+                Category = category,
+                Description = description,
+                Price = price,
+                ReleaseDate = releaseDate,
+                Multiplayer = multiplayer
+            };
+
+            collection.Add(game);
+        }
     }
 
     public static void UpdateDb(int id, Game newData)
@@ -260,10 +300,13 @@ public static class MySqlInterop {
         DataColumn nameColumn = new("Name", typeof(string));
         nameColumn.AllowDBNull = false;
         
+        DataColumn categoryColumn = new("Category", typeof(string));
+        categoryColumn.AllowDBNull = false;
+        
         DataColumn descriptionColumn = new("Description", typeof(string));
         descriptionColumn.AllowDBNull = false;
         
-        DataColumn priceColumn = new("Price", typeof(decimal));
+        DataColumn priceColumn = new("Price", typeof(float));
         priceColumn.AllowDBNull = false;
         
         DataColumn releaseDateColumn = new("ReleaseDate", typeof(DateTime));
@@ -275,6 +318,7 @@ public static class MySqlInterop {
         // Add columns to the table
         table.Columns.Add(idColumn);
         table.Columns.Add(nameColumn);
+        table.Columns.Add(categoryColumn);
         table.Columns.Add(descriptionColumn);
         table.Columns.Add(priceColumn);
         table.Columns.Add(releaseDateColumn);
@@ -298,8 +342,8 @@ public static class MySqlInterop {
             return "tinyint";
         }
 
-        if (datatype == typeof(decimal)) {
-            return "decimal";
+        if (datatype == typeof(float)) {
+            return "float";
         }
 
         if (datatype == typeof(string)) {

@@ -20,7 +20,7 @@
             
             <StackPanel Orientation="Horizontal">
                 <Label>User: </Label>
-                <TextBox Name="UserTextBox" Width="200" VerticalAlignment="Center" VerticalContentAlignment="Center">localhost</TextBox>
+                <TextBox Name="UserTextBox" Width="200" VerticalAlignment="Center" VerticalContentAlignment="Center"></TextBox>
             </StackPanel>
             
             <StackPanel Orientation="Horizontal">

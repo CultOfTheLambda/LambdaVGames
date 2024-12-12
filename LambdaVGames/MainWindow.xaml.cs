@@ -1,27 +1,34 @@
 ﻿using System.Collections.ObjectModel;
 using MySql.Data.MySqlClient;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Reflection.PortableExecutable;
 
 namespace LambdaVGames;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
+/// </summary>
 public partial class MainWindow : Window {
-    private readonly MySqlConnection connection;
+    private MySqlConnection connection;
+
+    private readonly List<Game> databaseCollection = [];
+
     public ObservableCollection<Game> Games { get; } = [];
+
+    private string filter = string.Empty;
 
     public MainWindow() {
         InitializeComponent();
 
+        DataContext = this;
 
         DatabaseDialog dbDialog = new();
         dbDialog.ShowDialog();
         connection = MySqlInterop.Connection ?? throw new NullReferenceException("Database connection is null.");
 
-        DataContext = this;
+        GamesListBox.ItemsSource = Games;
     }
 
     protected override void OnClosing(CancelEventArgs e) {
@@ -32,24 +39,24 @@ public partial class MainWindow : Window {
     }
 
     private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e) {
-        await RefreshGamesList();
+        await RefreshGamesList(true);
     }
 
-    // Update object if the box is being edited and update the db
-    private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+    // Update object if the box is being edited
+    private async void NameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Name = NameTextBox.Text;
             UpadateDb();
         }
     }
 
-  /*private void CategoryTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+    private async void CategoryTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
-            Games[GamesListBox.SelectedIndex].Ca = CategoryTextBox.Text;
+            Games[GamesListBox.SelectedIndex].Category = CategoryTextBox.Text;
         }
-    }*/
+    }
 
-    private void DescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+    private async void DescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Description = DescriptionTextBox.Text;
             UpadateDb();
@@ -57,16 +64,18 @@ public partial class MainWindow : Window {
         }
     }
 
-    private void PriceTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+    private async void PriceTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
+            Games[GamesListBox.SelectedIndex].Price = Convert.ToSingle(PriceTextBox.Text);
             Games[GamesListBox.SelectedIndex].Price = Convert.ToDouble(PriceTextBox.Text);
             UpadateDb();
 
+            UpadateDb();
         }
     }
 
            
-    private void ReleaseDateTextBox_SelectedDateChanged(object sender, SelectionChangedEventArgs e) {
+    private async void ReleaseDateTextBox_SelectedDateChanged(object sender, SelectionChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].ReleaseDate = ReleaseDateTextBox.SelectedDate?? DateTime.MinValue;
             UpadateDb();
@@ -74,7 +83,7 @@ public partial class MainWindow : Window {
         }
     }
 
-    private void YesBtn_Click(object sender, RoutedEventArgs e) {
+    private async void YesBtn_Click(object sender, RoutedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Multiplayer = true;
             UpadateDb();
@@ -82,7 +91,7 @@ public partial class MainWindow : Window {
         }
     }
 
-    private void NoBtn_Click(object sender, RoutedEventArgs e) {
+    private async void NoBtn_Click(object sender, RoutedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Multiplayer = false;
             UpadateDb();
@@ -92,53 +101,83 @@ public partial class MainWindow : Window {
 
     // Display variables from the object in the boxes
     private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-        NameTextBox.Text = Games[GamesListBox.SelectedIndex].Name;
-        //CategoryTextBox.Text = Games[GamesListBox.SelectedIndex].category;
-        DescriptionTextBox.Text = Games[GamesListBox.SelectedIndex].Description;
-        PriceTextBox.Text = Games[GamesListBox.SelectedIndex].Price.ToString();
-        ReleaseDateTextBox.Text = Games[GamesListBox.SelectedIndex].ReleaseDate.ToString();
+        if (GamesListBox.SelectedIndex > -1) {
+            Game selectedGame = Games[GamesListBox.SelectedIndex];
 
-        switch (Games[GamesListBox.SelectedIndex].Multiplayer) {
-            case true:
-                YesBtn.IsChecked = true;
-                break;
-            case false:
+            // Zeige die Details des ausgewählten Spiels an
+            NameTextBox.Text = selectedGame.Name;
+            CategoryTextBox.Text = selectedGame.Category;
+            DescriptionTextBox.Text = selectedGame.Description;
+            PriceTextBox.Text = selectedGame.Price.ToString();
+            ReleaseDateTextBox.Text = selectedGame.ReleaseDate.ToString();
 
-                NoBtn.IsChecked = true;
-                break;
+            switch (selectedGame.Multiplayer) {
+                case true:
+                    YesBtn.IsChecked = true;
+                    break;
+
+                case false:
+                    NoBtn.IsChecked = true;
+                    break;
+            }
         }
     }
+
     //Update the db with the values from the selected object
     public void UpadateDb()
     {
         MySqlInterop.UpdateDb(Games[GamesListBox.SelectedIndex].Id, Games[GamesListBox.SelectedIndex]);
     }
 
-    private async Task RefreshGamesList() {
+    private async void MenuItem_OnClick(object sender, RoutedEventArgs e) {
+        DatabaseDialog dbDialog = new(MySqlInterop.Server?? "localhost", MySqlInterop.Username?? string.Empty, string.Empty, MySqlInterop.Database?? "myDb");
+        dbDialog.ShowDialog();
+
+        connection = MySqlInterop.Connection ?? connection;
+
+        await RefreshGamesList(true);
+    }
+
+    private async Task RefreshGamesList(bool queryDatabase = true) {
+        if (queryDatabase) {
+            await MySqlInterop.QueryDatabase(databaseCollection);
+        }
+
         Games.Clear();
 
-        MySqlCommand pullAll = new("SELECT * FROM Games", connection);
-
-        await using MySqlDataReader reader = (MySqlDataReader)await pullAll.ExecuteReaderAsync();
-
-        while (await reader.ReadAsync()) {
-            int id = reader.GetInt32("Id");
-            string name = reader.GetString("Name");
-            string description = reader.GetString("Description");
-            double price = reader.GetDouble("Price");
-            DateTime releaseDate = reader.GetDateTime("ReleaseDate");
-            bool multiplayer = reader.GetBoolean("Multiplayer");
-
-            Game game = new() {
-                Id = id,
-                Name = name,
-                Description = description,
-                Price = price,
-                ReleaseDate = releaseDate,
-                Multiplayer = multiplayer
-            };
-
-            Games.Add(game);
+        foreach(Game game in databaseCollection) {
+            if (game.Name.ToLower().StartsWith(filter.ToLower())) {
+                Games.Add(game);
+            }
         }
+    }
+
+    private void OnMenuLinkClick(object sender, RoutedEventArgs e) {
+        Process.Start(new ProcessStartInfo {
+            FileName = ((MenuItem)sender).Tag.ToString(),
+            UseShellExecute = true
+        });
+    }
+
+    private void OnExitClick(object sender, RoutedEventArgs e) {
+        this.Close();
+    }
+
+    private void OnPreferenceMenuLink(object sender, RoutedEventArgs e) {
+        PreferencesDialog pD = new();
+        pD.ShowDialog();
+    }
+
+    private async void SearchBartxtbx_TextChanged(object sender, TextChangedEventArgs e) {
+        if (SearchBarTxtbx.Text != string.Empty) {
+            searchBarLbl.Visibility = Visibility.Collapsed;
+        }
+        else {
+            searchBarLbl.Visibility = Visibility.Visible;
+        }
+
+        filter = SearchBarTxtbx.Text;
+
+        await RefreshGamesList(false);
     }
 }

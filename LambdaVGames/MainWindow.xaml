@@ -18,13 +18,28 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.ColumnSpan="2" VerticalAlignment="Center">
-            <MenuItem Header="File" />
+            <MenuItem Header="File">
+                <MenuItem Header="Manage Connection" Click="MenuItem_OnClick"/>
+                <MenuItem Header="Export Schema"/>
+                <Separator/>
+                <MenuItem Header="Preferences" Click="OnPreferenceMenuLink"/>
+                <Separator/>
+                <MenuItem Header="Exit" Click="OnExitClick"/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="Documentation" Tag="https://github.com/CultOfTheLambda/LambdaVGames/blob/master/README.md" Click="OnMenuLinkClick"/>
+                <MenuItem Header="Support" Tag="https://github.com/CultOfTheLambda/LambdaVGames/issues" Click="OnMenuLinkClick"/>
+            </MenuItem>
         </Menu>
 
         <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Background="#4C73A8" Height="50" VerticalAlignment="Center">
             <DockPanel Grid.Column="0" HorizontalAlignment="Left">
-                <TextBox Width="250" Height="25" Margin="10" HorizontalAlignment="Right" 
-                    Background="#444444" BorderBrush="#666666" Foreground="White" Text="Search..."/>
+                <Grid>
+                    <TextBox x:Name="SearchBarTxtbx" Width="250" Height="25" Margin="10" HorizontalAlignment="Right" 
+                        Background="#444444" BorderBrush="#666666" Foreground="White" TextChanged="SearchBartxtbx_TextChanged"/>
+                    <Label x:Name="searchBarLbl" Height="26" Margin="10,12,10,12" IsHitTestVisible="False"
+                        BorderBrush="#666666" Foreground="White" Content="Search..."/>
+                </Grid>
             </DockPanel>
         </DockPanel>
 
@@ -39,7 +54,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Grid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Background="#3C5A82" Margin="10">
+        <Grid Grid.Row="2" Grid.Column="1" Background="#3C5A82" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="173*"/>
                 <ColumnDefinition Width="437*"/>
@@ -61,7 +76,7 @@
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                         <Label Content="Category:" Width="100" Foreground="White" VerticalAlignment="Center"/>
-                        <TextBox x:Name="CategoryTextBox" Width="400" Background="#4C73A8" Foreground="White" BorderBrush="#666666"/>
+                        <TextBox x:Name="CategoryTextBox" Width="400" Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="CategoryTextBox_TextChanged"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -97,7 +112,7 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Remove" Width="100" Height="30" Background="#B34141" Foreground="White" Margin="10, 0"/>
                 <Button Content="Add" Width="100" Height="30" Background="#4C73A8" Foreground="White" Margin="10, 0"/>
             </StackPanel>
