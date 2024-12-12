@@ -46,6 +46,7 @@ public partial class MainWindow : Window {
     private async void NameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Name = NameTextBox.Text;
+            UpadateDb();
         }
     }
 
@@ -58,12 +59,22 @@ public partial class MainWindow : Window {
     private async void DescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Description = DescriptionTextBox.Text;
+            UpadateDb();
+
         }
     }
 
     private async void PriceTextBox_TextChanged(object sender, TextChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
-            Games[GamesListBox.SelectedIndex].Price = Convert.ToSingle(PriceTextBox.Text);
+            if (float.TryParse(PriceTextBox.Text, out float result)) {
+                Games[GamesListBox.SelectedIndex].Price = result;
+                UpadateDb();
+            }
+            else
+            {
+                PriceTextBox.Text = Games[GamesListBox.SelectedIndex].Price.ToString();
+                MessageBox.Show("Invalid price");
+            }
         }
     }
 
@@ -71,18 +82,24 @@ public partial class MainWindow : Window {
     private async void ReleaseDateTextBox_SelectedDateChanged(object sender, SelectionChangedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].ReleaseDate = ReleaseDateTextBox.SelectedDate?? DateTime.MinValue;
+            UpadateDb();
+
         }
     }
 
     private async void YesBtn_Click(object sender, RoutedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Multiplayer = true;
+            UpadateDb();
+
         }
     }
 
     private async void NoBtn_Click(object sender, RoutedEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Multiplayer = false;
+            UpadateDb();
+
         }
     }
 
@@ -108,6 +125,12 @@ public partial class MainWindow : Window {
                     break;
             }
         }
+    }
+
+    //Update the db with the values from the selected object
+    public void UpadateDb()
+    {
+        MySqlInterop.UpdateDb(Games[GamesListBox.SelectedIndex].Id, Games[GamesListBox.SelectedIndex]);
     }
 
     private async void MenuItem_OnClick(object sender, RoutedEventArgs e) {
