@@ -232,4 +232,24 @@ public partial class MainWindow : Window {
 
         await RefreshGamesList(false);
     }
+
+    private async void RemoveBtn_Click(object sender, RoutedEventArgs e) {
+        if (selectedGame != null) {
+            await MySqlInterop.RemoveFromDb(selectedGame.Id);
+
+            await RefreshGamesList(true);
+        }
+    }
+
+    private async void AddObjBtn_Click(object sender, RoutedEventArgs e) {
+        AdditionDialogWindow additionDialog = new();
+
+        additionDialog.ShowDialog();
+
+        if (additionDialog.newGame != null) {
+            await MySqlInterop.InsertIntoDB(additionDialog.newGame);
+        }
+
+        await RefreshGamesList(true);
+    }
 }

@@ -276,6 +276,30 @@ public static class MySqlInterop {
         await command.ExecuteNonQueryAsync();
     }
 
+    public static async Task RemoveFromDb(int id) {
+        MySqlCommand command = new($"DELETE FROM Games WHERE Id={id};", Connection);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public static async Task RemoveFromDb(string filter) {
+        MySqlCommand command = new($"DELETE FROM Games WHERE {filter};", Connection);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public static async Task InsertIntoDB(Game newGame) {
+        MySqlCommand command = new("INSERT INTO Games (name, category, description, price, releasedate, multiplayer) VALUES (@name, @category, @description, @price, @releaseDate, @multiplayer);", Connection);
+        command.Parameters.AddWithValue("@name", newGame.Name);
+        command.Parameters.AddWithValue("@category", newGame.Category);
+        command.Parameters.AddWithValue("@description", newGame.Description);
+        command.Parameters.AddWithValue("@price", newGame.Price);
+        command.Parameters.AddWithValue("@releaseDate", newGame.ReleaseDate);
+        command.Parameters.AddWithValue("@multiplayer", newGame.Multiplayer);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
     public static async Task CloseConnection() {
         if (Connection != null) {
             await Connection.CloseAsync();
