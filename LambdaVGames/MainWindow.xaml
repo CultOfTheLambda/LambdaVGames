@@ -71,7 +71,7 @@
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                         <Label Content="Name:" Width="100" Foreground="White" VerticalAlignment="Center"/>
-                        <TextBox x:Name="NameTextBox" Width="400" Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="NameTextBox_TextChanged"/>
+                        <local:UserTextBox x:Name="NameTextBox" Width="400" Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="NameTextBox_TextChanged"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -81,8 +81,7 @@
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                         <Label Content="Description:" Width="100" Foreground="White" VerticalAlignment="Top"/>
-                        <TextBox x:Name="DescriptionTextBox" Width="400" Height="100" AcceptsReturn="True" TextWrapping="Wrap" 
- Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="DescriptionTextBox_TextChanged"/>
+                        <TextBox x:Name="DescriptionTextBox" Width="400" Height="100" AcceptsReturn="True" TextWrapping="Wrap" Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextChanged="DescriptionTextBox_TextChanged"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
