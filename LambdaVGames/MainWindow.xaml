@@ -113,8 +113,8 @@
             </ScrollViewer>
 
             <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Remove" Width="100" Height="30" Background="#B34141" Foreground="White" Margin="10, 0"/>
-                <Button Content="Add" Width="100" Height="30" Background="#4C73A8" Foreground="White" Margin="10, 0"/>
+                <Button x:Name="removeBtn" Content="Remove" Width="100" Height="30" Background="#B34141" Foreground="White" Margin="10, 0" Click="RemoveBtn_Click"/>
+                <Button x:Name="addObjBtn" Content="Add" Width="100" Height="30" Background="#4C73A8" Foreground="White" Margin="10, 0" Click="AddObjBtn_Click"/>
             </StackPanel>
         </Grid>
     </Grid>
