@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using LambdaVGames.Controls;
@@ -12,6 +13,10 @@ namespace LambdaVGames;
 /// Interaction logic for MainWindow.xaml
 /// </summary>
 public partial class MainWindow : Window {
+    private const string LVG_CONFIG_PATH = "lvg_config.json";
+    
+    private UserPreferences preferences;
+    
     private MySqlConnection connection;
 
     private readonly List<Game> databaseCollection = [];
@@ -27,10 +32,6 @@ public partial class MainWindow : Window {
 
         DataContext = this;
 
-        DatabaseDialog dbDialog = new();
-        dbDialog.ShowDialog();
-        connection = MySqlInterop.Connection ?? throw new NullReferenceException("Database connection is null.");
-
         GamesListBox.ItemsSource = Games;
     }
 
@@ -42,12 +43,38 @@ public partial class MainWindow : Window {
     }
 
     private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e) {
-        await RefreshGamesList(true);
+        DatabaseDialog dbDialog = new(preferences);
+        dbDialog.ShowDialog();
+        connection = MySqlInterop.Connection ?? throw new NullReferenceException("Database connection is null.");
+        
+        SavePreferences();
+        
+        await RefreshGamesList();
+    }
+    
+    private void MainWindow_Initialized(object? sender, EventArgs e) {
+        if (!File.Exists(LVG_CONFIG_PATH)) {
+            File.WriteAllText(LVG_CONFIG_PATH, UserPreferences.DefaultPreferences.ToJson());
+            preferences = UserPreferences.DefaultPreferences;
+        }
+        else {
+            if (UserPreferences.FromJson(File.ReadAllText(LVG_CONFIG_PATH), out UserPreferences? preferences)) {
+                this.preferences = preferences!;
+            }
+            else {
+                this.preferences = UserPreferences.DefaultPreferences;
+                
+                if (MessageBox.Show(
+                        "The config file is invalid. Default Preferences will be used. Would you like to regenerate the config file?",
+                        "Invalid config file.", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes) {
+                    SavePreferences();
+                }
+            }
+        }
     }
 
-    // Update object if the box is being edited
-    private async void NameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
-        
+    private void SavePreferences() {
+        File.WriteAllText(LVG_CONFIG_PATH, preferences.ToJson());
     }
     
     private async void NameTextBox_TextEditEnd(object sender, TextEditEndEventArgs e) {
@@ -176,10 +203,12 @@ public partial class MainWindow : Window {
     }
 
     private async void MenuItem_OnClick(object sender, RoutedEventArgs e) {
-        DatabaseDialog dbDialog = new(MySqlInterop.Server?? "localhost", MySqlInterop.Username?? string.Empty, string.Empty, MySqlInterop.Database?? "myDb");
+        DatabaseDialog dbDialog = new(preferences);
         dbDialog.ShowDialog();
 
         connection = MySqlInterop.Connection ?? connection;
+        
+        SavePreferences();
 
         await RefreshGamesList(true);
     }
