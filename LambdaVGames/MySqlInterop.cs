@@ -261,9 +261,8 @@ public static class MySqlInterop {
         }
     }
 
-    public static void UpdateDb(int id, Game newData)
-    {
-        MySqlCommand command = new MySqlCommand("UPDATE Games SET Name = @name, Category = @category, Description = @description, Price = @price, ReleaseDate = @releaseDate, Multiplayer = @multiplayer WHERE id = @id;", MySqlInterop.Connection);
+    public static async Task UpdateDb(int id, Game newData) {
+        MySqlCommand command = new("UPDATE Games SET Name = @name, Category = @category, Description = @description, Price = @price, ReleaseDate = @releaseDate, Multiplayer = @multiplayer WHERE id = @id;", MySqlInterop.Connection);
         command.Parameters.AddWithValue("@id", newData.Id);
         command.Parameters.AddWithValue("@name", newData.Name);
         command.Parameters.AddWithValue("@category", newData.Category);
@@ -271,7 +270,8 @@ public static class MySqlInterop {
         command.Parameters.AddWithValue("@price", newData.Price);
         command.Parameters.AddWithValue("@releaseDate", newData.ReleaseDate);
         command.Parameters.AddWithValue("@multiplayer", newData.Multiplayer);
-        command.ExecuteNonQuery();
+        
+        await command.ExecuteNonQueryAsync();
     }
 
     public static async Task CloseConnection() {
