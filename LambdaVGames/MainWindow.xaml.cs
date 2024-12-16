@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using LambdaVGames.Controls;
 
 namespace LambdaVGames;
 
@@ -46,25 +47,26 @@ public partial class MainWindow : Window {
 
     // Update object if the box is being edited
     private async void NameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+        
+    }
+    
+    private async void NameTextBox_TextEditEnd(object sender, TextEditEndEventArgs e) {
         if (selectedGame != null) {
             selectedGame.Name = NameTextBox.Text;
             await UpdateDb();
 
             await RefreshGamesList(false, true);
-
-            NameTextBox.Focus();
-            NameTextBox.CaretIndex = NameTextBox.Text.Length;
         }
     }
 
-    private async void CategoryTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+    private async void CategoryTextBox_TextEditEnd(object sender, TextEditEndEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Category = CategoryTextBox.Text;
             await UpdateDb();
         }
     }
 
-    private async void DescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+    private async void DescriptionTextBox_TextEditEnd(object sender, TextEditEndEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             Games[GamesListBox.SelectedIndex].Description = DescriptionTextBox.Text;
             await UpdateDb();
@@ -72,7 +74,7 @@ public partial class MainWindow : Window {
         }
     }
 
-    private async void PriceTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+    private async void PriceTextBox_TextEditEnd(object sender, TextEditEndEventArgs e) {
         if (GamesListBox.SelectedIndex >= 0) {
             if (float.TryParse(PriceTextBox.Text, out float result)) {
                 Games[GamesListBox.SelectedIndex].Price = result;
@@ -108,15 +110,16 @@ public partial class MainWindow : Window {
 
     // Display variables from the object in the boxes
     private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-        if (GamesListBox.SelectedIndex > -1) {
+        // Skip if the selected game did not change
+        if (GamesListBox.SelectedIndex > -1 && selectedGame != Games[GamesListBox.SelectedIndex]) {
             selectedGame = Games[GamesListBox.SelectedIndex];
-
+            
             // Show details of the selected game
             NameTextBox.SetText(selectedGame.Name);
-            CategoryTextBox.Text = selectedGame.Category;
-            DescriptionTextBox.Text = selectedGame.Description;
-            PriceTextBox.Text = selectedGame.Price.ToString();
-            ReleaseDateTextBox.SelectedDate = selectedGame.ReleaseDate;
+            CategoryTextBox.SetText(selectedGame.Category);
+            DescriptionTextBox.SetText(selectedGame.Description);
+            PriceTextBox.SetText(selectedGame.Price.ToString());
+            ReleaseDateTextBox.SetDate(selectedGame.ReleaseDate);
             
             switch (selectedGame.Multiplayer) {
                 case true:
@@ -142,10 +145,10 @@ public partial class MainWindow : Window {
             selectedGame = null;
             
             NameTextBox.SetText(string.Empty);
-            CategoryTextBox.Text = string.Empty;
-            DescriptionTextBox.Text = string.Empty;
-            PriceTextBox.Text = string.Empty;
-            ReleaseDateTextBox.Text = string.Empty;
+            CategoryTextBox.SetText(string.Empty);
+            DescriptionTextBox.SetText(string.Empty);
+            PriceTextBox.SetText(string.Empty);
+            ReleaseDateTextBox.SetDate(null);
             
             YesBtn.IsChecked = false;
             NoBtn.IsChecked = false;
@@ -164,7 +167,12 @@ public partial class MainWindow : Window {
 
     //Update the db with the values from the selected object
     private async Task UpdateDb() {
-        await MySqlInterop.UpdateDb(Games[GamesListBox.SelectedIndex].Id, Games[GamesListBox.SelectedIndex]);
+        try {
+            await MySqlInterop.UpdateDb(Games[GamesListBox.SelectedIndex].Id, Games[GamesListBox.SelectedIndex]);
+        }
+        catch (Exception e) {
+            MessageBox.Show($"An error occured: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private async void MenuItem_OnClick(object sender, RoutedEventArgs e) {

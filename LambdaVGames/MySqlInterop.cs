@@ -259,6 +259,8 @@ public static class MySqlInterop {
 
             collection.Add(game);
         }
+        
+        await reader.CloseAsync();
     }
 
     public static async Task UpdateDb(int id, Game newData) {
@@ -275,8 +277,7 @@ public static class MySqlInterop {
     }
 
     public static async Task CloseConnection() {
-        if (Connection != null)
-        {
+        if (Connection != null) {
             await Connection.CloseAsync();
         }
 
