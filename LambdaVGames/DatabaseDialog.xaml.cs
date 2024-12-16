@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Windows;
-using MySql.Data.MySqlClient;
+﻿using System.Windows;
 
 namespace LambdaVGames;
 
@@ -8,17 +6,21 @@ namespace LambdaVGames;
 /// A dialog window to connect to a database.
 /// </summary>
 public partial class DatabaseDialog : Window {
+    private UserPreferences preferences;
+    
     public DatabaseDialog() {
         InitializeComponent();
     }
 
-    public DatabaseDialog(string host, string user, string password, string database) {
+    public DatabaseDialog(UserPreferences preferences) {
         InitializeComponent();
         
-        HostTextBox.Text = host;
-        UserTextBox.Text = user;
-        PasswordTextBox.Password = password;
-        DatabaseTextBox.Text = database;
+        this.preferences = preferences;
+        
+        HostTextBox.Text = preferences.LastConnection.Server?? string.Empty;
+        UserTextBox.Text = preferences.LastConnection.Username ?? string.Empty;
+        PasswordTextBox.Password = preferences.LastConnection.Password ?? string.Empty;
+        DatabaseTextBox.Text = preferences.LastConnection.Database?? string.Empty;
     }
 
     private async void ConnectButton_OnClick(object sender, RoutedEventArgs e) {
@@ -35,7 +37,17 @@ public partial class DatabaseDialog : Window {
             
             MessageBox.Show($"Unable to connect to the database server: {ex.Message}", "Connection failed",
                 MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            
+            PasswordTextBox.Clear();
         }
+
+        preferences.LastConnection = new() {
+            Server = HostTextBox.Text,
+            Username = UserTextBox.Text,
+            Password = PasswordTextBox.Password,
+            Database = DatabaseTextBox.Text
+        };
+        
 
         if (MySqlInterop.IsConnectedToServer) {
             if (string.IsNullOrWhiteSpace(DatabaseTextBox.Text)) {
