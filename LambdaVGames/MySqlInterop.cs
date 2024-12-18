@@ -214,7 +214,7 @@ public static class MySqlInterop {
             
                 MySqlCommand dropTableCmd = new($"DROP TABLE {tableName};", Connection);
                 await dropTableCmd.ExecuteNonQueryAsync();
-            }   
+            }
         }
         
         MySqlCommand createNewTableCmd = new("""
@@ -264,8 +264,8 @@ public static class MySqlInterop {
     }
 
     public static async Task UpdateDb(int id, Game newData) {
-        MySqlCommand command = new("UPDATE Games SET Name = @name, Category = @category, Description = @description, Price = @price, ReleaseDate = @releaseDate, Multiplayer = @multiplayer WHERE id = @id;", MySqlInterop.Connection);
-        command.Parameters.AddWithValue("@id", newData.Id);
+        MySqlCommand command = new("UPDATE Games SET Name = @name, Category = @category, Description = @description, Price = @price, ReleaseDate = @releaseDate, Multiplayer = @multiplayer WHERE id = @id;", Connection);
+        command.Parameters.AddWithValue("@id", id);
         command.Parameters.AddWithValue("@name", newData.Name);
         command.Parameters.AddWithValue("@category", newData.Category);
         command.Parameters.AddWithValue("@description", newData.Description);
@@ -288,8 +288,8 @@ public static class MySqlInterop {
         await command.ExecuteNonQueryAsync();
     }
 
-    public static async Task InsertIntoDB(Game newGame) {
-        MySqlCommand command = new("INSERT INTO Games (name, category, description, price, releasedate, multiplayer) VALUES (@name, @category, @description, @price, @releaseDate, @multiplayer);", Connection);
+    public static async Task InsertIntoDb(Game newGame) {
+        MySqlCommand command = new("INSERT INTO Games (Name, Category, Description, Price, ReleaseDate, Multiplayer) VALUES (@name, @category, @description, @price, @releaseDate, @multiplayer);", Connection);
         command.Parameters.AddWithValue("@name", newGame.Name);
         command.Parameters.AddWithValue("@category", newGame.Category);
         command.Parameters.AddWithValue("@description", newGame.Description);

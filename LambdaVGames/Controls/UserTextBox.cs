@@ -11,6 +11,10 @@ public class UserTextBox : TextBox {
     public static readonly RoutedEvent TextEditEndEvent = EventManager.RegisterRoutedEvent("TextEditEnd", RoutingStrategy.Bubble,
         typeof(TextEditEndEventHandler), typeof(UserTextBox));
     
+    /// <summary>
+    /// Fired when the user finishes editing the <see cref="UserTextBox"/>, by pressing Enter or removing focus.
+    /// </summary>
+    /// <param name="e"></param>
     public event TextEditEndEventHandler TextEditEnd {
         add => AddHandler(TextEditEndEvent, value);
 

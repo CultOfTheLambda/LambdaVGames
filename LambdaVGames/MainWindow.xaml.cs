@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +14,9 @@ namespace LambdaVGames;
 /// Interaction logic for MainWindow.xaml
 /// </summary>
 public partial class MainWindow : Window {
-    private const string LVG_CONFIG_PATH = "lvg_config.json";
+    public const string LVG_LOCAL_PATH = "lvg_local";
+    public const string LVG_CONFIG_PATH = $"{LVG_LOCAL_PATH}/lvg_config.json";
+    public const string LVG_IMAGES_PATH = $"{LVG_LOCAL_PATH}/images";
     
     private UserPreferences preferences;
     
@@ -50,9 +53,19 @@ public partial class MainWindow : Window {
         SavePreferences();
         
         await RefreshGamesList();
+        
+        SetDataControlEnabled(false);
     }
     
     private void MainWindow_Initialized(object? sender, EventArgs e) {
+        if (!Directory.Exists(LVG_LOCAL_PATH)) {
+            Directory.CreateDirectory(LVG_LOCAL_PATH);
+        }
+
+        if (!Directory.Exists(LVG_IMAGES_PATH)) {
+            Directory.CreateDirectory(LVG_IMAGES_PATH);
+        }
+        
         if (!File.Exists(LVG_CONFIG_PATH)) {
             File.WriteAllText(LVG_CONFIG_PATH, UserPreferences.DefaultPreferences.ToJson());
             preferences = UserPreferences.DefaultPreferences;
@@ -134,8 +147,7 @@ public partial class MainWindow : Window {
             await UpdateDb();
         }
     }
-
-    // Display variables from the object in the boxes
+    
     private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
         // Skip if the selected game did not change
         if (GamesListBox.SelectedIndex > -1 && selectedGame != Games[GamesListBox.SelectedIndex]) {
@@ -145,8 +157,9 @@ public partial class MainWindow : Window {
             NameTextBox.SetText(selectedGame.Name);
             CategoryTextBox.SetText(selectedGame.Category);
             DescriptionTextBox.SetText(selectedGame.Description);
-            PriceTextBox.SetText(selectedGame.Price.ToString());
+            PriceTextBox.SetText(selectedGame.Price.ToString(CultureInfo.CurrentCulture));
             ReleaseDateTextBox.SetDate(selectedGame.ReleaseDate);
+            GameImageControl.ImageId = selectedGame.Id;
             
             switch (selectedGame.Multiplayer) {
                 case true:
@@ -158,15 +171,7 @@ public partial class MainWindow : Window {
                     break;
             }
             
-            // Enable textboxes
-            NameTextBox.IsEnabled = true;
-            CategoryTextBox.IsEnabled = true;
-            DescriptionTextBox.IsEnabled = true;
-            PriceTextBox.IsEnabled = true;
-            ReleaseDateTextBox.IsEnabled = true;
-            
-            YesBtn.IsEnabled = true;
-            NoBtn.IsEnabled = true;
+            SetDataControlEnabled(true);
         }
         else {
             selectedGame = null;
@@ -176,20 +181,25 @@ public partial class MainWindow : Window {
             DescriptionTextBox.SetText(string.Empty);
             PriceTextBox.SetText(string.Empty);
             ReleaseDateTextBox.SetDate(null);
+            GameImageControl.ImageId = -1;
             
             YesBtn.IsChecked = false;
             NoBtn.IsChecked = false;
             
-            // Disable textboxes
-            NameTextBox.IsEnabled = false;
-            CategoryTextBox.IsEnabled = false;
-            DescriptionTextBox.IsEnabled = false;
-            PriceTextBox.IsEnabled = false;
-            ReleaseDateTextBox.IsEnabled = false;
-            
-            YesBtn.IsEnabled = false;
-            NoBtn.IsEnabled = false;
+            SetDataControlEnabled(false);
         }
+    }
+
+    private void SetDataControlEnabled(bool enabled) {
+        NameTextBox.IsEnabled = enabled;
+        CategoryTextBox.IsEnabled = enabled;
+        DescriptionTextBox.IsEnabled = enabled;
+        PriceTextBox.IsEnabled = enabled;
+        ReleaseDateTextBox.IsEnabled = enabled;
+        GameImageControl.IsEnabled = enabled;
+            
+        YesBtn.IsEnabled = enabled;
+        NoBtn.IsEnabled = enabled;
     }
 
     //Update the db with the values from the selected object
@@ -249,15 +259,15 @@ public partial class MainWindow : Window {
         pD.ShowDialog();
     }
 
-    private async void SearchBartxtbx_TextChanged(object sender, TextChangedEventArgs e) {
-        if (SearchBarTxtbx.Text != string.Empty) {
+    private async void SearchBar_TextChanged(object sender, TextChangedEventArgs e) {
+        if (SearchBar.Text != string.Empty) {
             searchBarLbl.Visibility = Visibility.Collapsed;
         }
         else {
             searchBarLbl.Visibility = Visibility.Visible;
         }
 
-        filter = SearchBarTxtbx.Text;
+        filter = SearchBar.Text;
 
         await RefreshGamesList(false);
     }
@@ -265,6 +275,8 @@ public partial class MainWindow : Window {
     private async void RemoveBtn_Click(object sender, RoutedEventArgs e) {
         if (selectedGame != null) {
             await MySqlInterop.RemoveFromDb(selectedGame.Id);
+            
+            ImageControl.CleanupImage(selectedGame.Id);
 
             await RefreshGamesList(true);
         }
@@ -276,9 +288,9 @@ public partial class MainWindow : Window {
         additionDialog.ShowDialog();
 
         if (additionDialog.newGame != null) {
-            await MySqlInterop.InsertIntoDB(additionDialog.newGame);
+            await MySqlInterop.InsertIntoDb(additionDialog.newGame);
         }
 
         await RefreshGamesList(true);
-    }
+    } 
 }
