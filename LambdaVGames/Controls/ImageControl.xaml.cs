@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using LambdaVGames.Windows;
 using Microsoft.Win32;
 
 namespace LambdaVGames.Controls;

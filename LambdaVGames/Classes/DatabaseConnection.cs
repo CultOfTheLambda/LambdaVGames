@@ -1,4 +1,4 @@
-﻿namespace LambdaVGames;
+﻿namespace LambdaVGames.Classes;
 
 public class DatabaseConnection {
     public static DatabaseConnection DefaultConnection { get; } = new() {

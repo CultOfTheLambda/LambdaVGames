@@ -1,5 +1,7 @@
 ﻿using System.Windows;
-namespace LambdaVGames {
+using LambdaVGames.Classes;
+
+namespace LambdaVGames.Windows.Dialogs {
     /// <summary>
     /// Interaktionslogik für AdditionDialogWindow.xaml
     /// </summary>

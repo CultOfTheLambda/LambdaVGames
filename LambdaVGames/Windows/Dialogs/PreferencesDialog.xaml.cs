@@ -2,12 +2,11 @@
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
-namespace LambdaVGames;
+namespace LambdaVGames.Windows.Dialogs;
 
 public partial class PreferencesDialog : Window, INotifyPropertyChanged{
-    private string _settingsPage = "../SettingsPages/AccountPage.xaml";
+    private string _settingsPage = "pack://application:,,,/Windows/SettingsPages/AccountPage.xaml";
     public string SettingsPage {
         get => _settingsPage;
         set {
@@ -25,7 +24,7 @@ public partial class PreferencesDialog : Window, INotifyPropertyChanged{
 
     private void OnTreePointSelect(object sender, RoutedEventArgs e) {
         TreeViewItem item = sender as TreeViewItem;
-        SettingsPage = $"../SettingsPages/{item.Tag.ToString()}Page.xaml";
+        SettingsPage = $"pack://application:,,,/Windows/SettingsPages/{item.Tag.ToString()}Page.xaml";
     }
 
     private void OnCancleClick(object sender, RoutedEventArgs e) {
