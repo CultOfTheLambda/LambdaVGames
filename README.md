@@ -3,8 +3,11 @@ LambdaVGames is a WPF based database management program to manage informations a
 
 ## Functionality
 The current functionality includes:
-- Connecting to a Database
-- Creating a Database and a schema
+- Connecting to a Database/Chang´ing the Connection in the application
+- Automatic dtabase and schema validation and (re-)creation
+- Viewing Games and Game data
+- Editing, Removing and Adding Games
+- Loading locally stored images for games
 
 ## Tutorial
 1. Start the Program
@@ -20,3 +23,4 @@ Database: myDb
 @Blabliblubpaul
 @FelixAcedia
 @PatrickPattygso
+@Chuu2byou
