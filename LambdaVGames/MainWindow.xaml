@@ -36,8 +36,8 @@
         <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" Background="#4C73A8" Height="50" VerticalAlignment="Center">
             <DockPanel Grid.Column="0" HorizontalAlignment="Left">
                 <Grid>
-                    <TextBox x:Name="SearchBarTxtbx" Width="250" Height="25" Margin="10" HorizontalAlignment="Right" 
-                        Background="#444444" BorderBrush="#666666" Foreground="White" TextChanged="SearchBartxtbx_TextChanged"/>
+                    <TextBox x:Name="SearchBar" Width="250" Height="25" Margin="10" HorizontalAlignment="Right" 
+                        Background="#444444" BorderBrush="#666666" Foreground="White" TextChanged="SearchBar_TextChanged"/>
                     <Label x:Name="searchBarLbl" Height="26" Margin="10,12,10,12" IsHitTestVisible="False"
                         BorderBrush="#666666" Foreground="White" Content="Search..."/>
                 </Grid>
@@ -67,9 +67,8 @@
 
             <ScrollViewer Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
-                    <Button Width="120" Height="150" Margin="10"/>
-
-
+                    <controls:ImageControl x:Name="GameImageControl" Width="150" Height="150" Margin="10" Background="CornflowerBlue"/>
+                    
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                         <Label Content="Name:" Width="100" Foreground="White" VerticalAlignment="Center"/>
                         <controls:UserTextBox x:Name="NameTextBox" Width="400" Background="#4C73A8" Foreground="White" BorderBrush="#666666" TextEditEnd="NameTextBox_TextEditEnd"/>
