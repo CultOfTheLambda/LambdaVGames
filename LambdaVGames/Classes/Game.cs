@@ -1,4 +1,4 @@
-﻿namespace LambdaVGames;
+﻿namespace LambdaVGames.Classes;
 
 public class Game {
     public int Id { get; set; }

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Data;
-using System.Windows;
+﻿using System.Data;
 using MySql.Data.MySqlClient;
-using MySqlX.XDevAPI;
 
-namespace LambdaVGames;
+namespace LambdaVGames.Classes;
 
 public static class MySqlInterop {
     public const string DefaultDbname = "LambdaVGamesDb";

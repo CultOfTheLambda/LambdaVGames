@@ -1,4 +1,4 @@
-﻿<Window x:Class="LambdaVGames.DatabaseDialog"
+﻿<Window x:Class="LambdaVGames.Windows.Dialogs.DatabaseDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -36,7 +36,7 @@
         
         <Button Name="ConnectButton" Grid.Row="1" Width="200" Height="30" FontSize="20" Click="ConnectButton_OnClick">Connect</Button> 
         
-        <Image Name="LoadingIcon" Grid.Row="1" gif:ImageBehavior.AnimatedSource="Resources/LoadingIcon.gif" Width="50" Height="50"
+        <Image Name="LoadingIcon" Grid.Row="1" gif:ImageBehavior.AnimatedSource="pack://application:,,,/Resources/LoadingIcon.gif" Width="50" Height="50"
                IsHitTestVisible="False" Margin="250, 0, 0, 0" Visibility="Hidden"></Image>
     </Grid>
 </Window>

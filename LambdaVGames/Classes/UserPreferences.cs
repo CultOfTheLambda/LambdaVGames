@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace LambdaVGames;
+namespace LambdaVGames.Classes;
 
 public class UserPreferences {
     private static JsonSerializerOptions SerializerOptions { get; } = new() {

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace LambdaVGames.SettingsPages;
+namespace LambdaVGames.Windows.SettingsPages;
 
 public partial class DataBasePage : Page{
     public DataBasePage() {

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
+using LambdaVGames.Classes;
 
-namespace LambdaVGames;
+namespace LambdaVGames.Windows.Dialogs;
 
 /// <summary>
 /// A dialog window to connect to a database.

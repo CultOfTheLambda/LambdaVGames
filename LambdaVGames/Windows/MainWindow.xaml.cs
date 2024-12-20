@@ -6,9 +6,11 @@ using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using LambdaVGames.Classes;
 using LambdaVGames.Controls;
+using LambdaVGames.Windows.Dialogs;
 
-namespace LambdaVGames;
+namespace LambdaVGames.Windows;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
