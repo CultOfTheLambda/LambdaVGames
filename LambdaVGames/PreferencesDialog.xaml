@@ -23,12 +23,21 @@
         </DockPanel>
 
         <TreeView Grid.Row="1" Background="#3C5A82" Margin="10">
-
+            <TreeViewItem Header="Account" Tag="Account" Selected="OnTreePointSelect">
+                <TreeViewItem Header="User Information" Tag="Account" Selected="OnTreePointSelect"/>
+                <TreeViewItem Header="Preference Import/Export" Tag="Account" Selected="OnTreePointSelect"/>
+            </TreeViewItem>
+            <TreeViewItem Header="DataBase" Tag="DataBase" Selected="OnTreePointSelect">
+                <TreeViewItem Header="Connection" Tag="DataBase" Selected="OnTreePointSelect"/>
+            </TreeViewItem>
+            <TreeViewItem Header="Appearance" Tag="Appearance" Selected="OnTreePointSelect">
+                <TreeViewItem Header="Colors" Tag="Appearance" Selected="OnTreePointSelect"/>
+                <TreeViewItem Header="Text" Tag="Appearance" Selected="OnTreePointSelect"/>
+            </TreeViewItem>
         </TreeView>
 
-        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical" Background="#3C5A82" Margin="10">
-
-        </StackPanel>
+        <Frame Grid.Column="1" Grid.Row="1" Background="#3C5A82" Margin="10" NavigationUIVisibility="Hidden"
+               Source="{Binding SettingsPage}"/>
 
         <DockPanel Grid.Row="2" Grid.ColumnSpan="2" Background="#4C73A8">
             <DockPanel HorizontalAlignment="Right" Margin="10">
