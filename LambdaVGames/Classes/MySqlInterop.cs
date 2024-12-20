@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Windows;
 using MySql.Data.MySqlClient;
 
 namespace LambdaVGames.Classes;
@@ -308,6 +309,83 @@ public static class MySqlInterop {
         Username = null;
         Password = null;
         Database = null;
+    }
+
+    public static string GetSchemaXmlString() {
+        return GetRequiredSchema().GetXmlSchema();
+    }
+
+    public static async Task<string> GetDataCsvString(char separator = ';', bool addHeader = true) {
+        string csv = addHeader ? $"Name{separator}Category{separator}Description{separator}Price{separator}ReleaseDate{separator}Multiplayer\n" : string.Empty;
+        
+        MySqlCommand pullAll = new("SELECT * FROM Games;", Connection);
+
+        await using MySqlDataReader reader = (MySqlDataReader)await pullAll.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync()) {
+            string name = reader.GetString("Name");
+            string category = reader.GetString("Category");
+            string description = reader.GetString("Description");
+            float price = reader.GetFloat("Price");
+            DateTime releaseDate = reader.GetDateTime("ReleaseDate");
+            bool multiplayer = reader.GetBoolean("Multiplayer");
+
+            csv += $"{name}{separator}{category}{separator}{description}{separator}{price}{separator}{releaseDate}{separator}{multiplayer}\n";
+        }
+        
+        await reader.CloseAsync();
+
+        return csv;
+    }
+    
+    /// <summary>
+    /// <para>Reads data from the specified CSV string and overrides the existing data in the database.</para>
+    /// <para>If the csv file is invalid, the current db data is not cleared.</para>
+    /// </summary>
+    /// <param name="lines"></param>
+    /// <param name="separator"></param>
+    /// <param name="ignore"></param>
+    /// <returns>A Tuple containing a boolean hadError and a Dictionary containing the exceptions that occurred and with the respective line as the key.</returns>
+    public static async Task<(bool hadError, Dictionary<int, Exception>? errors)> ImportDataFromCsv(string[] lines, char separator = ';', bool ignore = true) {
+        MySqlCommand deleteAll = new("DELETE FROM Games;", Connection);
+
+        bool hasError = false;
+        List<Game> newData = new(lines.Length);
+        Dictionary<int, Exception> errors = new(lines.Length);
+
+        for (int i = ignore ? 1 : 0; i < lines.Length; i++) {
+            try {
+                string[] data = lines[i].Split(separator);
+                
+                Game game = new() {
+                    Name = data[0],
+                    Category = data[1],
+                    Description = data[2],
+                    Price = Convert.ToSingle(data[3]),
+                    ReleaseDate = DateTime.Parse(data[4]),
+                    Multiplayer = Convert.ToBoolean(data[5])
+                };
+                
+                newData.Add(game);
+            }
+            catch (Exception e) {
+                hasError = true;
+                errors.Add(i, e);
+            }
+        }
+
+        if (!hasError) {
+            await deleteAll.ExecuteNonQueryAsync();
+            
+            foreach (Game game in newData) {
+                await InsertIntoDb(game);
+            }
+            
+            return (false, null);
+        }
+        else {
+            return (true, errors);
+        }
     }
 
     private static bool ValidateDbName(string dbName) {

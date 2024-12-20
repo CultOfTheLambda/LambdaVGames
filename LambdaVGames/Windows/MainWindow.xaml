@@ -19,8 +19,10 @@
 
         <Menu Grid.ColumnSpan="2" VerticalAlignment="Center">
             <MenuItem Header="File">
-                <MenuItem Header="Manage Connection" Click="MenuItem_OnClick"/>
-                <MenuItem Header="Export Schema"/>
+                <MenuItem Header="Manage Connection" Click="ManageConnectionMenuItem_OnClick"/>
+                <MenuItem Header="Export Schema" Click="ExportSchemaMenuItem_OnClick"/>
+                <MenuItem Header="Export Data" Click="ExportDataMenuItem_OnClick"/>
+                <MenuItem Header="Import Data" Click="ImportDataMenuItem_OnCLick"/>
                 <Separator/>
                 <MenuItem Header="Preferences" Click="OnPreferenceMenuLink"/>
                 <Separator/>

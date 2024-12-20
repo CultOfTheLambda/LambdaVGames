@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using LambdaVGames.Classes;
 using LambdaVGames.Controls;
 using LambdaVGames.Windows.Dialogs;
+using Microsoft.Win32;
 
 namespace LambdaVGames.Windows;
 
@@ -214,7 +215,7 @@ public partial class MainWindow : Window {
         }
     }
 
-    private async void MenuItem_OnClick(object sender, RoutedEventArgs e) {
+    private async void ManageConnectionMenuItem_OnClick(object sender, RoutedEventArgs e) {
         DatabaseDialog dbDialog = new(preferences);
         dbDialog.ShowDialog();
 
@@ -294,5 +295,64 @@ public partial class MainWindow : Window {
         }
 
         await RefreshGamesList(true);
-    } 
+    }
+
+    private void ExportSchemaMenuItem_OnClick(object sender, RoutedEventArgs e) {
+        SaveFileDialog dialog = new() {
+            Filter = "XML Files|*.xml;"
+        };
+
+        if (dialog.ShowDialog() == true) {
+            File.WriteAllText(dialog.FileName, MySqlInterop.GetSchemaXmlString());
+        }
+    }
+
+    private async void ExportDataMenuItem_OnClick(object sender, RoutedEventArgs e) {
+        ExportCsvDataDialog exportCsvDataDialog = new();
+        exportCsvDataDialog.ShowDialog();
+
+        char separator = exportCsvDataDialog.Separator;
+        bool addHeader = exportCsvDataDialog.AddHeader;
+        
+        SaveFileDialog dialog = new() {
+            Filter = "CSV Files|*.csv;"
+        };
+
+        if (dialog.ShowDialog() == true) {
+            await File.WriteAllTextAsync(dialog.FileName, await MySqlInterop.GetDataCsvString(separator, addHeader));
+        }
+    }
+
+    private async void ImportDataMenuItem_OnCLick(object sender, RoutedEventArgs e) {
+        if (MessageBox.Show("This will override all existing data. Proceed?", "Import new data.",
+                MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes) {
+            OpenFileDialog dialog = new() {
+                Filter = "CSV Files|*.csv"
+            };
+
+            if (dialog.ShowDialog() == true) {
+                ImportCsvDataDialog importCsvDataDialog = new();
+                importCsvDataDialog.ShowDialog();
+
+                char separator = importCsvDataDialog.Separator;
+                bool ignoreHeader = importCsvDataDialog.IgnoreHeader;
+
+                string[] lines = await File.ReadAllLinesAsync(dialog.FileName);
+            
+                (bool hadError, Dictionary<int, Exception>? errors) result = await MySqlInterop.ImportDataFromCsv(lines, separator, ignoreHeader);
+
+                if (!result.hadError) {
+                    MessageBox.Show("Import finished.", "Import finished.", MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+
+                    await RefreshGamesList(true);
+                }
+                else {
+                    string errors = string.Concat(result.errors?.Select(x => $"Error on line {x.Key}: {x.Value.Message}\n")?? []);
+                    
+                    MessageBox.Show($"Import failed:\n{errors}", "Import failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+    }
 }
